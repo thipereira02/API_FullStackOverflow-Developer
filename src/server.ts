@@ -1,8 +1,7 @@
+/* eslint-disable import/no-unresolved */
 import './setup';
-import app from "./app";
+import app from './app';
 
-const port:number = Number(process.env.PORT)
-
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}.`);
+app.listen(Number(process.env.PORT), () => {
+  console.log(`Server is listening on port ${Number(process.env.PORT)}.`);
 });
