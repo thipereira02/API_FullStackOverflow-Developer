@@ -10,6 +10,7 @@ app.use(express.json());
 
 app.post('/questions', questionsController.newQuestion);
 app.get('/questions', questionsController.getUnansweredQuestions);
+app.post('/questions/:id', questionsController.answerQuestion);
 app.post('/users', usersController.newUser);
 
 export default app;

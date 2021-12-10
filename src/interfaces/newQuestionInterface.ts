@@ -1,4 +1,4 @@
-export default interface QuestionInterface{
+export default interface NewQuestionInterface{
     question: string,
 	student: string,
 	userClass: string,

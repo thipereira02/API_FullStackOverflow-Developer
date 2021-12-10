@@ -50,3 +50,32 @@ export async function getUnansweredQuestions() {
     `);
     return result.rows;
 }
+
+export async function checkQuestionId(questionId: number):Promise<boolean> {
+    const result = await connection.query(`
+        SELECT *
+        FROM questions
+        WHERE id=$1
+    `, [questionId]);
+    if (result.rowCount === 0) return false;
+    return true;
+}
+
+export async function answer(answer: string, questionId: number, token: string): Promise<boolean> {
+    const whoAnswer = await connection.query(`
+        SELECT *
+        FROM students
+        WHERE token=$1
+    `, [token]);
+    if (whoAnswer.rowCount === 0) return false;
+
+    const answeredBy = whoAnswer.rows[0].id;
+    const now = dayjs().format('YYYY-MM-DD HH:mm'); 
+
+    await connection.query(`
+        UPDATE questions
+        SET answered=true, "answeredAt"=$1, "answeredBy"=$2, answer=$3
+        WHERE id=$4
+    `, [now, answeredBy, answer, questionId]);
+    return true;
+}
