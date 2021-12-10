@@ -9,6 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/questions', questionsController.newQuestion);
+app.get('/questions', questionsController.getUnansweredQuestions);
 app.post('/users', usersController.newUser);
 
 export default app;

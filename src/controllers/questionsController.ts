@@ -11,6 +11,20 @@ export async function newQuestion(req: Request, res: Response) {
         if (!addNewQuestion) return res.sendStatus(400);
 
         return res.send(addNewQuestion);
+        
+    } catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+
+export async function getUnansweredQuestions(req: Request, res: Response) {
+    try {
+        const questions = await questionsService.getQuestions();
+        if (!questions) return res.sendStatus(404);
+
+        return res.send(questions);
+
     } catch(err){
         console.log(err);
         res.sendStatus(500);

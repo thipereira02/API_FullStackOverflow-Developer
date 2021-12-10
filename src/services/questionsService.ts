@@ -10,3 +10,9 @@ export async function createQuestion(question: string, student: string, userClas
         id: questionId
     }
 }
+
+export async function getQuestions() {
+    const questions = await questionsRepository.getUnansweredQuestions();
+    if (!questions) return false;
+    return questions;
+}
