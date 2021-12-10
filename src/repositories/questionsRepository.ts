@@ -1,8 +1,10 @@
 import "../setup";
 import connection from "../database";
+import dayjs from 'dayjs'
 
 export async function newQuestion(question: string, student: string, userClass: string, tags: string):Promise<number> {
     let classId;
+    const now = dayjs().format('YYYY-MM-DD HH:mm');
 
     const classAlreadyRegistered = await connection.query(`
         SELECT *
@@ -31,9 +33,9 @@ export async function newQuestion(question: string, student: string, userClass: 
     const questionId = await connection.query(`
         INSERT INTO questions
         (question, "classId", student, tags, "submitAt")
-        VALUES ($1, $2, $3, $4, NOW())
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING id
-    `, [question, classId, student, tags]);
+    `, [question, classId, student, tags, now]);
     return questionId.rows[0].id;
 }
 
