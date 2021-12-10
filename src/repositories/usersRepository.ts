@@ -1,6 +1,16 @@
 import "../setup";
 import connection from "../database";
 
+export async function checkName(name: string):Promise<boolean> {
+    const check = await connection.query(`
+        SELECT *
+        FROM students
+        WHERE name=$1
+    `, [name]);
+    if (check.rowCount === 0) return true;
+    return false;
+}
+
 export async function createUser(name: string, userClass: string, token: string):Promise<string> {
     let classId;
 

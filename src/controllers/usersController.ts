@@ -8,7 +8,8 @@ export async function newUser(req: Request, res: Response) {
         const { name, userClass } = req.body as UserInterface;
         
         const createUser = await usersService.create(name, userClass);
-        if (!createUser) return res.sendStatus(400);
+        if (createUser === null) return res.sendStatus(409);
+        if (createUser === false) return res.sendStatus(400);
 
         res.send(createUser).status(201);
 
