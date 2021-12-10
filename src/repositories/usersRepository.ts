@@ -1,7 +1,7 @@
 import "../setup";
 import connection from "../database";
 
-export async function createUser(name: string, userClass: string, token: string) {
+export async function createUser(name: string, userClass: string, token: string):Promise<string> {
     let classId;
 
     const classAlreadyRegistered = await connection.query(`
