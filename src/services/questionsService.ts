@@ -30,3 +30,31 @@ export async function answerAQuestion(answer: string, questionId: number, token:
 
     return true;
 }
+
+export async function getQuestionById(questionId: number) {
+    const question = await questionsRepository.getQuestion(questionId);
+    if (!question) return false;
+    if (question.answered === true) {
+        return {
+            question: question.question,
+            student: question.student,
+            class: question.class,
+            tags: question.tags,
+            answered: question.answered,
+            submitAt: question.submitAt,
+            answeredAt: question.answeredAt,
+            answeredBy: question.answeredBy,
+            answer: question.answer
+        }
+    }
+    else {
+        return {
+            question: question.question,
+            student: question.student,
+            class: question.class,
+            tags: question.tags,
+            answered: question.answered,
+            submitAt: question.submitAt,
+        }
+    }
+}

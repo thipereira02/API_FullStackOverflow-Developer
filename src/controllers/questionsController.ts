@@ -50,3 +50,18 @@ export async function answerQuestion(req: Request, res: Response) {
         res.sendStatus(500);
     }
 }
+
+export async function getQuestionById(req: Request, res: Response) {
+    try {
+        const questionId = Number(req.params.id);
+
+        const question = await questionsService.getQuestionById(questionId);
+        if (!question) return res.sendStatus(404);
+
+        return res.send(question);
+
+    } catch(err){
+        console.log(err);
+        res.sendStatus(500);
+    }
+}

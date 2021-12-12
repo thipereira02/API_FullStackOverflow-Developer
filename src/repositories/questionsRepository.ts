@@ -79,3 +79,29 @@ export async function answer(answer: string, questionId: number, token: string):
     `, [now, answeredBy, answer, questionId]);
     return true;
 }
+
+export async function getQuestion(questionId: number) {
+    const answered = await connection.query(`
+        SELECT questions.*,
+        classes.name AS class,
+        students.name AS "answeredBy"
+        FROM questions
+        JOIN classes
+        ON questions."classId"=classes.id
+        JOIN students
+        ON questions."answeredBy"=students.id
+        WHERE questions.id=$1
+    `, [questionId]);
+    if (answered.rowCount !== 0) return answered.rows[0];
+    
+    const unanswered = await connection.query(`
+        SELECT questions.*, 
+        classes.name AS class 
+        FROM questions 
+        JOIN classes 
+        ON questions."classId"=classes.id 
+        WHERE questions.id=$1 
+        AND answered=false
+    `, [questionId]);
+    return unanswered.rows[0];
+}
