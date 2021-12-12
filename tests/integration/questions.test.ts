@@ -69,3 +69,26 @@ describe('POST /questions', () => {
         expect(response.status).toEqual(400);
     });
 });
+
+describe('GET /questions', () => {
+    it('should answer with status 404 when there is no unanswered questions to get', async () => {
+        const response = await agent.get('/questions');
+        expect(response.status).toEqual(404);
+    });
+
+    it('should answer with status 200 and when there is no unanswered questions to get', async () => {
+        const newClass = await connection.query(`
+            INSERT INTO classes
+            (name)
+            VALUES ('T3')
+            RETURNING id
+        `);
+        await connection.query(`
+            INSERT INTO questions
+            (question, "classId", student, tags, "submitAt")
+            VALUES ('Uki ta contecendo?', ${newClass.rows[0].id}, 'Vegata', 'typescript, vida, javascript, java?', '2021-12-12 19:56')
+        `);
+        const response = await agent.get('/questions');
+        expect(response.status).toEqual(200);
+    });
+});
