@@ -48,6 +48,7 @@ export async function getUnansweredQuestions() {
         ON questions."classId"=classes.id
         WHERE answered=false
     `);
+    if (result.rowCount === 0) return false;
     return result.rows;
 }
 
