@@ -76,4 +76,18 @@ describe('Questions Service', () => {
     const result = await questionsService.createQuestion(question, student, userClass, tags);
     expect(result).toBeFalsy();
   });
+
+  it('Should return falsy when there is no unanswered questions to get', async () => {
+    jest.spyOn(questionsRepository, 'getUnansweredQuestions').mockImplementationOnce(async () => false);
+
+    const result = await questionsService.getQuestions();
+    expect(result).toBeFalsy();
+  });
+
+  it('Should return falsy when unanswered questions are returned', async () => {
+    jest.spyOn(questionsRepository, 'getUnansweredQuestions').mockImplementationOnce(async () => []);
+
+    const result = await questionsService.getQuestions();
+    expect(result).toBeTruthy();
+  });
 });
