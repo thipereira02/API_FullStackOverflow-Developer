@@ -1,6 +1,6 @@
 import supertest from 'supertest';
-import connection from '../../src/database';
-import app from '../../src/app';
+import connection from '../../database';
+import app from '../../app';
 
 export const agent = supertest(app);
 

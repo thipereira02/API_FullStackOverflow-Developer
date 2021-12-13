@@ -1,5 +1,5 @@
 import faker from 'faker';
-import connection from '../../src/database';
+import connection from '../../database';
 
 export async function insertStudent(classId: number) {
   const token = faker.datatype.uuid();

@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import faker from 'faker';
 
-import * as questionsService from '../../src/services/questionsService';
-import * as questionsRepository from '../../src/repositories/questionsRepository';
+import * as questionsService from '../../services/questionsService';
+import * as questionsRepository from '../../repositories/questionsRepository';
 
 describe('Questions Service', () => {
   it('Should return id when question is created', async () => {

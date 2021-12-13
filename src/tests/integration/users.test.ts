@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import '../../src/setup';
+import '../../setup';
 
 import { agent, clearDatabase, closeConnection } from '../utils/database';
 

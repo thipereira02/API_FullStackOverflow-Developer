@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import faker from 'faker';
 
-import * as usersService from '../../src/services/usersService';
-import * as usersRepository from '../../src/repositories/usersRepository';
+import * as usersService from '../../services/usersService';
+import * as usersRepository from '../../repositories/usersRepository';
 
 describe('Users Service', () => {
   it('Should return token when user is created', async () => {

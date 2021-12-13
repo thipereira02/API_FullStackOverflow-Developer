@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import '../../src/setup';
+import '../../setup';
 
 import { insertClass, insertQuestion, insertStudent } from '../factories/questionsFactory';
 import { agent, clearDatabase, closeConnection } from '../utils/database';
