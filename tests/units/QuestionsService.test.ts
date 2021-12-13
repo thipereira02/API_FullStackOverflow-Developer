@@ -126,4 +126,22 @@ describe('Questions Service', () => {
     const result = await questionsService.answerAQuestion(answer, questionId, token);
     expect(result).toBeFalsy();
   });
+
+  it('Should return false when questionId doesnt exists', async () => {
+    const questionId = Number(faker.datatype.number());
+
+    jest.spyOn(questionsRepository, 'getQuestion').mockImplementationOnce(async () => false);
+
+    const result = await questionsService.getQuestionById(questionId);
+    expect(result).toBe(false);
+  });
+
+  it('Should return truthy when the question is returned', async () => {
+    const questionId = Number(faker.datatype.number());
+
+    jest.spyOn(questionsRepository, 'getQuestion').mockImplementationOnce(async () => true);
+
+    const result = await questionsService.getQuestionById(questionId);
+    expect(result).toBeTruthy();
+  });
 });
