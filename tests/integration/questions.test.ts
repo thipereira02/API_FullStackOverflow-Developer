@@ -175,3 +175,50 @@ describe('POST /questions/:id', () => {
         expect(response.status).toEqual(400);
     });
 });
+
+describe('GET /questions/:id', () => {
+    it('should answer with status 200 when question is returned', async () => {
+        const newClass = await connection.query(`
+            INSERT INTO classes
+            (name)
+            VALUES ('T3')
+            RETURNING id
+        `);
+        const newQuestion = await connection.query(`
+            INSERT INTO questions
+            (question, "classId", student, tags, "submitAt")
+            VALUES ('Uki ta contecendo?', ${newClass.rows[0].id}, 'Vegata', 'typescript, vida, javascript, java?', '2021-12-12 19:56')
+            RETURNING id
+        `);
+        const questionId = newQuestion.rows[0].id;
+
+        const token = faker.datatype.uuid();
+        await connection.query(`
+            INSERT INTO students
+            (name, "classId", token)
+            VALUES ($1, $2, $3)
+        `, ['Veegata', newClass.rows[0].id, token]);
+
+        const response = await agent.get(`/questions/${questionId}`).set('Authorization', `Bearer ${token}`);
+        expect(response.status).toEqual(200);
+    });
+
+    it('should answer with status 404 when there is not question to return', async () => {
+        const newClass = await connection.query(`
+            INSERT INTO classes
+            (name)
+            VALUES ('T3')
+            RETURNING id
+        `);
+
+        const token = faker.datatype.uuid();
+        await connection.query(`
+            INSERT INTO students
+            (name, "classId", token)
+            VALUES ($1, $2, $3)
+        `, ['Veegata', newClass.rows[0].id, token]);
+
+        const response = await agent.get(`/questions/1`).set('Authorization', `Bearer ${token}`);
+        expect(response.status).toEqual(404);
+    });
+});
