@@ -2,8 +2,8 @@
 import { Response, Request } from 'express';
 
 import * as questionsService from '../services/questionsService';
-import NewQuestionInterface from '../interfaces/newQuestionInterface';
-import AnswerQuestionInterface from '../interfaces/answerQuestionInterface';
+import { NewQuestionInterface } from '../interfaces/newQuestionInterface';
+import { AnswerQuestionInterface } from '../interfaces/answerQuestionInterface';
 
 export async function newQuestion(req: Request, res: Response) {
   try {

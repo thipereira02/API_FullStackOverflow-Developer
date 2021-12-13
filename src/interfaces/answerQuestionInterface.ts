@@ -1,3 +1,5 @@
-export default interface AnswerQuestionInterface{
-    answer: string,
+interface AnswerQuestionInterface{
+  answer: string,
 }
+
+export { AnswerQuestionInterface };

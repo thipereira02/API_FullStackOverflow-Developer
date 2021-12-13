@@ -1,6 +1,8 @@
-export default interface NewQuestionInterface{
-    question: string,
-	student: string,
-	userClass: string,
-	tags: string
+interface NewQuestionInterface{
+  question: string,
+  student: string,
+  userClass: string,
+  tags: string
 }
+
+export { NewQuestionInterface };
