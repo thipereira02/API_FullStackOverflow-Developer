@@ -1,18 +1,15 @@
 import '../../src/setup';
-import supertest from 'supertest';
-import app from '../../src/app';
-import connection from '../../src/database';
-import faker from 'faker';
+
+import { insertClass, insertQuestion, insertStudent } from '../factories/questionsFactory';
+import { agent, clearDatabase, closeConnection } from '../utils/database';
 
 beforeEach(async () => {
-	await connection.query('TRUNCATE TABLE questions, students, classes RESTART IDENTITY');
+	await clearDatabase();
 });
 
-afterAll(() => {
-	connection.end();
+afterAll(async () => {
+	await closeConnection();
 });
-
-const agent = supertest(app);
 
 describe('POST /questions', () => {
     it('should answer with status 400 when question is empty', async () => {
@@ -78,17 +75,8 @@ describe('GET /questions', () => {
     });
 
     it('should answer with status 200 and when there is no unanswered questions to get', async () => {
-        const newClass = await connection.query(`
-            INSERT INTO classes
-            (name)
-            VALUES ('T3')
-            RETURNING id
-        `);
-        await connection.query(`
-            INSERT INTO questions
-            (question, "classId", student, tags, "submitAt")
-            VALUES ('Uki ta contecendo?', ${newClass.rows[0].id}, 'Vegata', 'typescript, vida, javascript, java?', '2021-12-12 19:56')
-        `);
+        await insertQuestion();
+
         const response = await agent.get('/questions');
         expect(response.status).toEqual(200);
     });
@@ -99,26 +87,9 @@ describe('POST /questions/:id', () => {
         const body = {
             answer: "Ok",
         }
-        const newClass = await connection.query(`
-            INSERT INTO classes
-            (name)
-            VALUES ('T3')
-            RETURNING id
-        `);
-        const newQuestion = await connection.query(`
-            INSERT INTO questions
-            (question, "classId", student, tags, "submitAt")
-            VALUES ('Uki ta contecendo?', ${newClass.rows[0].id}, 'Vegata', 'typescript, vida, javascript, java?', '2021-12-12 19:56')
-            RETURNING id
-        `);
-        const questionId = newQuestion.rows[0].id;
-
-        const token = faker.datatype.uuid();
-        await connection.query(`
-            INSERT INTO students
-            (name, "classId", token)
-            VALUES ($1, $2, $3)
-        `, ['Veegata', newClass.rows[0].id, token]);
+        const { questionId, classId } = await insertQuestion();
+    
+        const { token } = await insertStudent(classId);
 
         const response = await agent.post(`/questions/${questionId}`).send(body).set('Authorization', `Bearer ${token}`);
         expect(response.status).toEqual(201);
@@ -128,19 +99,9 @@ describe('POST /questions/:id', () => {
         const body = {
             answer: "Ok",
         }
-        const newClass = await connection.query(`
-            INSERT INTO classes
-            (name)
-            VALUES ('T3')
-            RETURNING id
-        `);
-
-        const token = faker.datatype.uuid();
-        await connection.query(`
-            INSERT INTO students
-            (name, "classId", token)
-            VALUES ($1, $2, $3)
-        `, ['Veegata', newClass.rows[0].id, token]);
+        const { classId } = await insertClass();
+       
+        const { token } = await insertStudent(classId);
 
         const response = await agent.post(`/questions/0`).send(body).set('Authorization', `Bearer ${token}`);
         expect(response.status).toEqual(404);
@@ -150,26 +111,9 @@ describe('POST /questions/:id', () => {
         const body = {
             answer: "",
         }
-        const newClass = await connection.query(`
-            INSERT INTO classes
-            (name)
-            VALUES ('T3')
-            RETURNING id
-        `);
-        const newQuestion = await connection.query(`
-            INSERT INTO questions
-            (question, "classId", student, tags, "submitAt")
-            VALUES ('Uki ta contecendo?', ${newClass.rows[0].id}, 'Vegata', 'typescript, vida, javascript, java?', '2021-12-12 19:56')
-            RETURNING id
-        `);
-        const questionId = newQuestion.rows[0].id;
+        const { questionId, classId } = await insertQuestion();
 
-        const token = faker.datatype.uuid();
-        await connection.query(`
-            INSERT INTO students
-            (name, "classId", token)
-            VALUES ($1, $2, $3)
-        `, ['Veegata', newClass.rows[0].id, token]);
+        const { token } = await insertStudent(classId);
 
         const response = await agent.post(`/questions/${questionId}`).send(body).set('Authorization', `Bearer ${token}`);
         expect(response.status).toEqual(400);
@@ -178,45 +122,18 @@ describe('POST /questions/:id', () => {
 
 describe('GET /questions/:id', () => {
     it('should answer with status 200 when question is returned', async () => {
-        const newClass = await connection.query(`
-            INSERT INTO classes
-            (name)
-            VALUES ('T3')
-            RETURNING id
-        `);
-        const newQuestion = await connection.query(`
-            INSERT INTO questions
-            (question, "classId", student, tags, "submitAt")
-            VALUES ('Uki ta contecendo?', ${newClass.rows[0].id}, 'Vegata', 'typescript, vida, javascript, java?', '2021-12-12 19:56')
-            RETURNING id
-        `);
-        const questionId = newQuestion.rows[0].id;
+        const { questionId, classId } = await insertQuestion();
 
-        const token = faker.datatype.uuid();
-        await connection.query(`
-            INSERT INTO students
-            (name, "classId", token)
-            VALUES ($1, $2, $3)
-        `, ['Veegata', newClass.rows[0].id, token]);
+        const { token } = await insertStudent(classId);
 
         const response = await agent.get(`/questions/${questionId}`).set('Authorization', `Bearer ${token}`);
         expect(response.status).toEqual(200);
     });
 
     it('should answer with status 404 when there is not question to return', async () => {
-        const newClass = await connection.query(`
-            INSERT INTO classes
-            (name)
-            VALUES ('T3')
-            RETURNING id
-        `);
-
-        const token = faker.datatype.uuid();
-        await connection.query(`
-            INSERT INTO students
-            (name, "classId", token)
-            VALUES ($1, $2, $3)
-        `, ['Veegata', newClass.rows[0].id, token]);
+        const { classId } = await insertClass();
+    
+        const { token } = await insertStudent(classId);
 
         const response = await agent.get(`/questions/1`).set('Authorization', `Bearer ${token}`);
         expect(response.status).toEqual(404);
