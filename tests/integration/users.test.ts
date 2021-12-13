@@ -1,17 +1,14 @@
 import '../../src/setup';
-import supertest from 'supertest';
-import app from '../../src/app';
-import connection from '../../src/database';
+
+import { agent, clearDatabase, closeConnection } from '../utils/database';
 
 beforeEach(async () => {
-	await connection.query('TRUNCATE TABLE questions, students, classes RESTART IDENTITY');
+  await clearDatabase();
 });
 
-afterAll(() => {
-	connection.end();
+afterAll(async () => {
+  await closeConnection();
 });
-
-const agent = supertest(app);
 
 describe('POST /users', () => {
   it('should answer with status 201 when user is created', async () => {
