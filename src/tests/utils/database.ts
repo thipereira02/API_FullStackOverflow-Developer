@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import supertest from 'supertest';
 import connection from '../../database';
 import app from '../../app';
